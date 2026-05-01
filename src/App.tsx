@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Upload, 
@@ -10,7 +10,10 @@ import {
   Camera,
   Search,
   Download,
-  Table as TableIcon
+  Table as TableIcon,
+  Settings,
+  X,
+  Key
 } from 'lucide-react';
 import { extractOrderDetails, OrderData } from './services/gemini';
 import { exportToExcel } from './utils/excel';
@@ -28,7 +31,23 @@ export default function App() {
   const [orders, setOrders] = useState<OrderData[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [startingOrderNum, setStartingOrderNum] = useState<number>(133169);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKey, setApiKey] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load saved API Key and settings
+  useEffect(() => {
+    const savedKey = localStorage.getItem('sahasra_api_key');
+    const savedOrderNum = localStorage.getItem('sahasra_order_num');
+    if (savedKey) setApiKey(savedKey);
+    if (savedOrderNum) setStartingOrderNum(parseInt(savedOrderNum));
+  }, []);
+
+  const saveSettings = () => {
+    localStorage.setItem('sahasra_api_key', apiKey);
+    localStorage.setItem('sahasra_order_num', startingOrderNum.toString());
+    setShowSettings(false);
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -45,12 +64,18 @@ export default function App() {
 
   const processImages = async () => {
     if (isProcessing) return;
+    
+    // Check for API Key
+    if (!apiKey && (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "MY_GEMINI_API_KEY")) {
+      setShowSettings(true);
+      return;
+    }
+
     setIsProcessing(true);
 
     const pending = processedFiles.filter(f => f.status === 'pending');
     let currentOrderNum = startingOrderNum;
 
-    // If there are existing orders, start from the next number
     if (orders.length > 0) {
       const lastNum = parseInt(orders[orders.length - 1].orderNumber);
       if (!isNaN(lastNum)) {
@@ -63,9 +88,8 @@ export default function App() {
 
       try {
         const base64 = await fileToBase64(item.file);
-        const results = await extractOrderDetails(base64, item.file.type);
+        const results = await extractOrderDetails(base64, item.file.type, apiKey);
         
-        // Apply sequential order numbers to extracted results
         const sequentiallyNumberedResults = results.map(res => {
           const updated = { ...res, orderNumber: currentOrderNum.toString() };
           currentOrderNum++;
@@ -213,6 +237,13 @@ export default function App() {
 
           <footer className="p-8 border-t border-white/5 space-y-3 bg-black/20">
             <button 
+              onClick={() => setShowSettings(true)}
+              className="w-full border border-white/10 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 hover:bg-white/5 transition-all text-white flex items-center justify-center gap-2"
+            >
+              <Settings className="w-3 h-3" />
+              CONFIGURE ENGINE
+            </button>
+            <button 
               disabled={isProcessing || processedFiles.filter(f => f.status === 'pending').length === 0}
               onClick={processImages}
               className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-[1.02] active:scale-95 disabled:opacity-20 disabled:scale-100 transition-all flex items-center justify-center gap-3"
@@ -240,6 +271,62 @@ export default function App() {
 
         {/* Right Data Grid (Dark) */}
         <div className="flex-1 flex flex-col bg-[#0F0F0F] overflow-hidden relative">
+          {/* Settings Modal */}
+          <AnimatePresence>
+            {showSettings && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-8"
+              >
+                <motion.div 
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  className="bg-[#111111] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
+                >
+                  <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                    <h3 className="font-black italic uppercase tracking-tighter text-emerald-500 flex items-center gap-2">
+                      <Settings className="w-4 h-4" />
+                      System Config
+                    </h3>
+                    <button onClick={() => setShowSettings(false)} className="opacity-40 hover:opacity-100 transition-opacity">
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="p-8 space-y-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-white/40 mb-2">
+                        <Key className="w-3 h-3" />
+                        <label className="text-[10px] uppercase font-mono tracking-widest">Gemini API Key</label>
+                      </div>
+                      <input 
+                        type="password"
+                        placeholder="PASTE_KEY_HERE"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        className="w-full bg-black border border-white/10 rounded-lg p-4 text-xs font-mono focus:border-emerald-500 transition-colors outline-none text-emerald-500"
+                      />
+                      <p className="text-[9px] opacity-30 leading-relaxed">
+                        GET YOUR KEY FROM: <a href="https://aistudio.google.com/app/apikey" target="_blank" className="underline text-emerald-500">AI STUDIO CONSOLE</a>. 
+                        THIS IS STORED LOCALLY IN YOUR BROWSER AND NEVER SENT TO OUR SERVERS.
+                      </p>
+                    </div>
+                    
+                    <div className="pt-4">
+                      <button 
+                        onClick={saveSettings}
+                        className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-400 transition-all shadow-xl"
+                      >
+                        SAVE PARAMETERS
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="p-8 flex justify-between items-center border-b border-white/5 bg-black/40 backdrop-blur-xl z-10">
             <div>
               <h2 className="text-2xl font-black tracking-tighter uppercase italic text-white">Extracted Metadata</h2>

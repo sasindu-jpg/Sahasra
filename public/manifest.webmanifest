@@ -1,0 +1,21 @@
+{
+  "name": "Sahasra Order Manager",
+  "short_name": "Sahasra",
+  "description": "AI-powered order extraction tool for Sahasra.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#10B981",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3003/3003248.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3003/3003248.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
