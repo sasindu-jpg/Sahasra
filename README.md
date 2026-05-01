@@ -1,20 +1,48 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Sahasra Order Manager v1.0
 
-# Run and deploy your AI Studio app
+AI-powered batch processor designed to extract order details from WhatsApp/Mobile screenshots and export them directly to Excel.
 
-This contains everything you need to run your app locally.
+## 🚀 Key Features
 
-View your app in AI Studio: https://ai.studio/apps/53f9157d-d525-4935-9ff6-35d49bab3a8a
+- **AI Extraction:** Uses Google Gemini 1.5 Flash to read handwritten or typed details from images.
+- **Sequential ID Engine:** Set a starting order number, and the system auto-increments for every image detected.
+- **Privacy First:** Users can input their own Google Gemini API keys in the settings. Keys are stored locally in the browser (localStorage) and never hit a server.
+- **Dark Mode UI:** Modern, high-contrast industrial interface.
+- **One-Click Export:** Generates clean `.xlsx` files ready for shipping/accounting.
+- **PWA Ready:** Can be installed on Windows/Mac/Linux as a standalone desktop application.
 
-## Run Locally
+## 🛠 Setup for Local Development
 
-**Prerequisites:**  Node.js
+1. **Clone the repo:**
+   ```bash
+   git clone <your-repo-url>
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Run the app:**
+   ```bash
+   npm run dev
+   ```
 
+## 🔑 How to Get an API Key
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Create a free API Key.
+3. In the Sahasra app, click **"CONFIGURE ENGINE"** and paste your key.
+
+## 📦 Deployment
+
+This app is a static React application. You can host it on:
+- **GitHub Pages** (Recommended)
+- **Vercel**
+- **Netlify**
+
+To build for production:
+```bash
+npm run build
+```
+
+---
+*Built with ❤️ for Sahasra Business.*
