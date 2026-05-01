@@ -1,0 +1,6 @@
+{
+  "name": "Sahasra Order Manager",
+  "description": "AI-powered tool to extract order details from WhatsApp screenshots for Sahasra business.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
