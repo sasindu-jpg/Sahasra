@@ -17,7 +17,7 @@ export async function extractOrderDetails(base64Image: string, mimeType: string,
     throw new Error("Gemini API Key is missing. Please configure it in Settings.");
   }
 
-  const ai = new GoogleGenAI(apiKey);
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = `Analyze this photo and extract order details.
   The first column is the Order Number (use 133169 as default if none found), 
   the second is the Customer Name (exact name, use FB profile name if only available), 
@@ -34,15 +34,15 @@ export async function extractOrderDetails(base64Image: string, mimeType: string,
   - Return ONLY a valid JSON array of objects.`;
 
   try {
-    const response = await ai.getGenerativeModel({ model: "gemini-1.5-flash" }).generateContent({
-      contents: [{
-        role: "user",
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: {
         parts: [
           { text: prompt },
           { inlineData: { data: base64Image, mimeType } }
         ]
-      }],
-      generationConfig: {
+      },
+      config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -63,7 +63,7 @@ export async function extractOrderDetails(base64Image: string, mimeType: string,
       }
     });
 
-    const text = response.response.text();
+    const text = response.text;
     if (!text) throw new Error("No response from AI");
     return JSON.parse(text);
   } catch (error) {

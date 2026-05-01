@@ -32,17 +32,25 @@ AI-powered batch processor designed to extract order details from WhatsApp/Mobil
 2. Create a free API Key.
 3. In the Sahasra app, click **"CONFIGURE ENGINE"** and paste your key.
 
-## 📦 Deployment
+## 📦 Deployment & Desktop App (.exe)
 
-This app is a static React application. You can host it on:
-- **GitHub Pages** (Recommended)
-- **Vercel**
-- **Netlify**
+This app can be compiled into a standalone Windows software (.exe).
 
-To build for production:
-```bash
-npm run build
-```
+### How to generate the Windows Software:
+1. **Download/Export** this project as a ZIP or clone it from GitHub.
+2. Open your terminal in the project folder.
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Build the Windows installer:
+   ```bash
+   npm run build:win
+   ```
+5. Your software will be ready in the `release/` folder.
+
+### PWA (Web Installation):
+If you don't want to build an `.exe`, you can simply open the URL in Chrome and click the **Install icon** in the address bar to add it to your desktop.
 
 ---
 *Built with ❤️ for Sahasra Business.*
