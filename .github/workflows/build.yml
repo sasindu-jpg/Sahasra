@@ -31,4 +31,5 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          args: --windows
           release: true
