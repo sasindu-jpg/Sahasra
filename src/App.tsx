@@ -549,7 +549,7 @@ function AppContent() {
                   <div className="pt-6 border-t border-white/5">
                     <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest text-white/20">
                       <span>V-TAG</span>
-                      <span className="text-emerald-500/60 font-black">v1.0.7</span>
+                      <span className="text-emerald-500/60 font-black">v1.0.8</span>
                     </div>
                   </div>
                 </motion.div>
