@@ -9,6 +9,8 @@ jobs:
     permissions:
       contents: write
     runs-on: windows-latest
+    env:
+      ELECTRON: true
     steps:
       - name: Check out git repository
         uses: actions/checkout@v4
@@ -21,15 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build Electron App
-        shell: pwsh
-        run: |
-          $env:ELECTRON = 'true'
-          npm run build
+      - name: Build App
+        run: npm run build
 
       - name: Build and Publish EXE
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           args: --windows
+          build: false
           release: true
