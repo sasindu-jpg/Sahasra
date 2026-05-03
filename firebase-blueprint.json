@@ -1,0 +1,23 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Stores user subscription and profile data",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "subscriptionExpiry": { "type": "string", "format": "date-time" },
+        "subscriptionStatus": { "type": "string", "enum": ["active", "expired", "none"] },
+        "packageType": { "type": "string", "enum": ["1month", "6months", "1year", "none"] },
+        "lastPaymentDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "subscriptionStatus"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Private user profiles and subscription status"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'sasindusenarath136@gmail.com' && 
+        request.auth.token.email_verified == true
+      );
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'subscriptionStatus']) &&
+             data.email is string &&
+             data.subscriptionStatus in ['active', 'expired', 'none'];
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      
+      // Users can't create or update their own subscription status
+      // Only admins can activate or renew subscriptions
+      allow create: if isOwner(userId) && 
+                      incoming().subscriptionStatus == 'none' &&
+                      isValidUser(incoming());
+      
+      allow update: if isAdmin() && isValidUser(incoming());
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+  }
+}
