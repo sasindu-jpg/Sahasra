@@ -1,5 +1,10 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // The built directory structure
 //
@@ -10,7 +15,7 @@ import path from 'node:path';
 // │ │ └── main.js
 // │
 process.env.DIST = path.join(__dirname, '../dist');
-process.env.VITE_PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public');
+process.env.VITE_PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST || '', '../public');
 
 
 let win: BrowserWindow | null;
@@ -18,7 +23,7 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    icon: path.join(process.env.VITE_PUBLIC || '', 'favicon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -37,7 +42,7 @@ function createWindow() {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
     // win.loadFile('dist/index.html')
-    win.loadFile(path.join(process.env.DIST, 'index.html'));
+    win.loadFile(path.join(process.env.DIST || '', 'index.html'));
   }
 }
 

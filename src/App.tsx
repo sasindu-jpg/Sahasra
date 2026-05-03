@@ -47,6 +47,7 @@ function AppContent() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [startingOrderNum, setStartingOrderNum] = useState<number>(133169);
   const [showSettings, setShowSettings] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const [apiKey, setApiKey] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -400,8 +401,8 @@ function AppContent() {
               <table className="w-full text-left border-collapse min-w-[1200px]">
                 <thead>
                   <tr className="bg-white/5 border-b border-white/10">
-                    {['#', 'Order Num', 'Customer Name', 'Address', 'Description', 'Phone 1', 'Phone 2', 'COD Amount'].map((h, i) => (
-                      <th key={i} className="p-5 text-[9px] uppercase font-mono tracking-widest text-emerald-500/60 font-bold border-r border-white/5 last:border-0">
+                    {['#', 'Order Num', 'Customer Name', 'Address', 'Description', 'Phone 1', 'Phone 2', 'COD Amount', 'City', 'Remarks'].map((h, i) => (
+                      <th key={i} className="p-5 text-[9px] uppercase font-mono tracking-widest text-emerald-500/60 font-bold border-r border-white/5 last:border-0 text-center">
                         {h}
                       </th>
                     ))}
@@ -424,21 +425,21 @@ function AppContent() {
                           <input 
                             value={order.orderNumber} 
                             onChange={(e) => handleCellEdit(idx, 'orderNumber', e.target.value)}
-                            className="bg-transparent w-full outline-none focus:text-emerald-500 transition-colors uppercase font-bold"
+                            className="bg-transparent w-full outline-none focus:text-emerald-500 transition-colors uppercase font-bold text-center"
                           />
                         </td>
                         <td className="p-5 border-r border-white/5">
                           <input 
                             value={order.customerName} 
                             onChange={(e) => handleCellEdit(idx, 'customerName', e.target.value)}
-                            className="bg-transparent w-full outline-none focus:text-emerald-500 transition-colors uppercase"
+                            className="bg-transparent w-full outline-none focus:text-emerald-500 transition-colors uppercase text-center"
                           />
                         </td>
                         <td className="p-5 border-r border-white/5">
                           <input 
                             value={order.address} 
                             onChange={(e) => handleCellEdit(idx, 'address', e.target.value)}
-                            className="bg-transparent w-full outline-none focus:text-emerald-500 transition-colors uppercase"
+                            className="bg-transparent w-full outline-none focus:text-emerald-500 transition-colors uppercase text-center"
                           />
                         </td>
                         <td className="p-5 border-r border-white/5 text-center">
@@ -460,11 +461,25 @@ function AppContent() {
                             className="bg-transparent w-full text-center outline-none focus:text-emerald-500 transition-colors"
                           />
                         </td>
-                        <td className="p-5 text-right bg-emerald-500/5 group-hover/row:bg-emerald-500/20 transition-all">
+                        <td className="p-5 border-r border-white/5 text-right bg-emerald-500/5 group-hover/row:bg-emerald-500/20 transition-all">
                           <input 
                             value={order.codAmount} 
                             onChange={(e) => handleCellEdit(idx, 'codAmount', e.target.value)}
                             className="bg-transparent w-full text-right outline-none focus:text-emerald-400 transition-colors font-black text-xs"
+                          />
+                        </td>
+                        <td className="p-5 border-r border-white/5 text-center">
+                          <input 
+                            value={order.city} 
+                            onChange={(e) => handleCellEdit(idx, 'city', e.target.value)}
+                            className="bg-transparent w-full text-center outline-none focus:text-emerald-500 transition-colors uppercase"
+                          />
+                        </td>
+                        <td className="p-5 text-center">
+                          <input 
+                            value={order.remarks} 
+                            onChange={(e) => handleCellEdit(idx, 'remarks', e.target.value)}
+                            className="bg-transparent w-full text-center outline-none focus:text-emerald-500 transition-colors uppercase"
                           />
                         </td>
                       </motion.tr>
@@ -490,6 +505,57 @@ function AppContent() {
           {/* Decorative background grid */}
           <div className="absolute inset-0 pointer-events-none opacity-[0.03]" 
                style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+          
+          {/* About Button */}
+          <div className="absolute bottom-6 right-8 z-30">
+            <button 
+              onClick={() => setShowAbout(true)}
+              className="w-10 h-10 bg-white/5 hover:bg-emerald-500 hover:text-black border border-white/10 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-sm group"
+            >
+              <AlertCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            </button>
+          </div>
+
+          {/* About Modal */}
+          <AnimatePresence>
+            {showAbout && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[10000] bg-black/90 backdrop-blur-md flex items-center justify-center p-6"
+              >
+                <motion.div 
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  className="bg-[#111] border border-white/10 rounded-3xl p-10 max-w-sm w-full text-center space-y-6 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent" />
+                  <button onClick={() => setShowAbout(false)} className="absolute top-4 right-4 text-white/20 hover:text-white">
+                    <X className="w-5 h-5" />
+                  </button>
+
+                  <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-3">
+                    <Camera className="w-8 h-8 text-emerald-500" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-black uppercase italic tracking-tighter text-white">Sahasra Order Manager</h2>
+                    <p className="text-[10px] font-mono text-white/40 uppercase tracking-[0.3em]">Developer / Architect</p>
+                    <p className="text-lg font-bold text-emerald-500 uppercase tracking-widest mt-2">N.W.O.Sasindu</p>
+                  </div>
+
+                  <div className="pt-6 border-t border-white/5">
+                    <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-widest text-white/20">
+                      <span>V-TAG</span>
+                      <span className="text-emerald-500/60 font-black">v1.0.7</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

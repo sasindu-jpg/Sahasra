@@ -1,8 +1,13 @@
 name: Build Electron App
 on:
   push:
+    branches:
+      - main
+      - master
     tags:
-      - 'v*' # ඔබ GitHub එකේ v1.0 වැනි tag එකක් දැමූ විට මෙය ක්රියාත්මක වේ
+      - 'v*'
+  release:
+    types: [created]
 
 jobs:
   release:

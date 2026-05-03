@@ -5,11 +5,13 @@ export function exportToExcel(orders: OrderData[]) {
   const worksheet = XLSX.utils.json_to_sheet(orders.map(order => ({
     'ORDER NUMBER': order.orderNumber,
     'CUSTOMER NAME': order.customerName,
-    'ADDRESS': order.address,
+    'ADDRES': order.address,
     'ORDER DESCRIPTION': order.orderDescription,
-    'PHONE NUMBER 1': order.phone1,
-    'PHONE NUMBER 2': order.phone2,
-    'COD AMOUNT': order.codAmount
+    'CUSTOMER FIRST PHONE NO': order.phone1,
+    'CUSTOMER SECOND PHONE NO': order.phone2,
+    'COD AMOUNT': order.codAmount,
+    'CITY': order.city,
+    'REMARKS': order.remarks
   })));
 
   const workbook = XLSX.utils.book_new();

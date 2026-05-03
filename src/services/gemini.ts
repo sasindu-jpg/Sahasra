@@ -8,6 +8,8 @@ export interface OrderData {
   phone1: string;
   phone2: string;
   codAmount: string;
+  city: string;
+  remarks: string;
 }
 
 export async function extractOrderDetails(base64Image: string, mimeType: string, customApiKey?: string): Promise<OrderData[]> {
@@ -19,13 +21,15 @@ export async function extractOrderDetails(base64Image: string, mimeType: string,
 
   const ai = new GoogleGenAI({ apiKey });
   const prompt = `Analyze this photo and extract order details.
-  The first column is the Order Number (use 133169 as default if none found), 
-  the second is the Customer Name (exact name, use FB profile name if only available), 
-  third is the Address, 
-  fourth is the Order Description (strictly "MEDICINE"), 
-  fifth is the First Phone Number (strictly no +94 or leading 0), 
-  sixth is the Second Phone Number (strictly no +94 or leading 0, use "-" if unavailable), 
-  and seventh is the price (COD Amount).
+  - Order Number (use sequentially if not found, but try to extract)
+  - Customer Name (exact name, uppercase)
+  - Address (uppercase)
+  - Order Description (strictly "MEDICINE")
+  - First Phone Number (no +94, no leading 0)
+  - Second Phone Number (no +94, no leading 0, use "-" if unavailable)
+  - COD Amount (price)
+  - City (strictly use "" - an empty string)
+  - Remarks (strictly use "" - an empty string)
   
   STRICT RULES:
   - All text in every field must be UPPERCASE ENGLISH.
@@ -55,9 +59,11 @@ export async function extractOrderDetails(base64Image: string, mimeType: string,
               orderDescription: { type: Type.STRING },
               phone1: { type: Type.STRING },
               phone2: { type: Type.STRING },
-              codAmount: { type: Type.STRING }
+              codAmount: { type: Type.STRING },
+              city: { type: Type.STRING },
+              remarks: { type: Type.STRING }
             },
-            required: ["orderNumber", "customerName", "address", "orderDescription", "phone1", "phone2", "codAmount"]
+            required: ["orderNumber", "customerName", "address", "orderDescription", "phone1", "phone2", "codAmount", "city", "remarks"]
           }
         }
       }
